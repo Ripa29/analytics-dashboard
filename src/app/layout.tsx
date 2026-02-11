@@ -10,6 +10,8 @@ import { useDashboardStore } from '@/lib/store/dashboardStore'
 import { Login } from '../components/auth/Login'
 import { Register } from '../components/auth/Register'
 import Link from 'next/link'
+import { cn } from '@/lib/utils'
+import { Shield, Briefcase, User, Sun, Moon } from 'lucide-react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,16 +20,14 @@ export default function RootLayout({
                                    }: {
     children: React.ReactNode
 }) {
-    const { darkMode, user } = useDashboardStore()
+    const { darkMode, toggleDarkMode, user } = useDashboardStore()
     const [mounted, setMounted] = useState(false)
     const [showRegister, setShowRegister] = useState(false)
 
-    // Prevent hydration mismatch
     useEffect(() => {
         setMounted(true)
     }, [])
 
-    // Loading state
     if (!mounted) {
         return (
             <html lang="en">
@@ -44,78 +44,125 @@ export default function RootLayout({
     if (!user) {
         return (
             <html lang="en" className={darkMode ? 'dark' : ''}>
-            <body className={`${inter.className} min-h-screen flex flex-col`}>
+            <body className={`${inter.className} min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950`}>
             {/* Navigation Bar */}
-            <nav className="border-b border-gray-200 dark:border-gray-800">
+            <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg sticky top-0 z-50">
                 <div className="container mx-auto px-4 sm:px-6 py-4">
                     <div className="flex items-center justify-between">
-                        <Link href="/" className="flex items-center space-x-2">
-                            <span className="text-xl font-bold gradient-text">Analytics</span>
+                        <Link href="/" className="flex items-center space-x-3">
+
+                            <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                        Analytics
+                                    </span>
                         </Link>
 
-                        <div className="flex items-center space-x-4">
-                            <button onClick={() => setShowRegister(false)}
-                                className={`font-medium ${!showRegister ? 'text-blue-600' : 'text-gray-600 dark:text-gray-400 hover:text-blue-600'}`}>
-                                Sign In
+                        <div className="flex items-center space-x-3">
+                            {/* Dark/Light Mode Toggle */}
+                            <button
+                                onClick={toggleDarkMode}
+                                className={cn(
+                                    "p-2 rounded-lg transition-colors",
+                                    darkMode
+                                        ? "bg-gray-800 text-yellow-400 hover:bg-gray-700"
+                                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                )}
+                                aria-label="Toggle theme"
+                            >
+                                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
                             </button>
-                            <button onClick={() => setShowRegister(true)}
-                                className={`font-medium ${showRegister ? 'text-blue-600' : 'text-gray-600 dark:text-gray-400 hover:text-blue-600'}`}>
-                                Register
-                            </button>
+
+                            {/* Sign In/Register Toggle */}
+                            <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                                <button
+                                    onClick={() => setShowRegister(false)}
+                                    className={cn(
+                                        "px-4 py-2 rounded-md font-medium transition-all duration-200",
+                                        !showRegister
+                                            ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 shadow-sm'
+                                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                                    )}
+                                >
+                                    Sign In
+                                </button>
+                                <button
+                                    onClick={() => setShowRegister(true)}
+                                    className={cn(
+                                        "px-4 py-2 rounded-md font-medium transition-all duration-200",
+                                        showRegister
+                                            ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 shadow-sm'
+                                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                                    )}
+                                >
+                                    Register
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </nav>
 
             {/* Main Content */}
-            <main className="flex-1 flex items-center justify-center p-4">
+            <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
                 <div className="w-full max-w-7xl mx-auto">
-                    <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
+                    <div className="flex flex-col lg:flex-row items-center  gap-8 lg:gap-12">
                         {/* Left Side - Branding */}
-                        <div className="lg:w-1/2">
-                            <div className="bg-gradient-to-br from-blue-500/10 to-purple-600/10 rounded-2xl p-8 lg:p-12">
-                                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-                                    Welcome to <span className="gradient-text">Analytics</span>
+                        <div className="lg:w-1/2 space-y-6">
+                            <div className="bg-gradient-to-br from-purple-500/10 to-pink-600/10 rounded-3xl p-8 lg:p-12 backdrop-blur-sm">
+                                <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                                    Welcome to{' '}
+                                    <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                                Analytics
+                                            </span>
                                 </h1>
-                                <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-                                    A powerful analytics dashboard with role-based access control, real-time insights, and comprehensive data management.
+                                <p className="text-lg lg:text-xl text-gray-600 dark:text-gray-400 mb-8">
+                                    Choose your role and get instant access to your personalized dashboard.
                                 </p>
 
-                                <div className="space-y-6">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                            </svg>
+                                {/* Role Cards */}
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    {/* Admin Card */}
+                                    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                                        <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-3">
+                                            <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                         </div>
-                                        <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Role-based Access</h3>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">Admin, Manager, and User roles with different permissions</p>
-                                        </div>
+                                        <h3 className="font-semibold text-gray-900 dark:text-white">Admin</h3>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                            Full system access
+                                        </p>
                                     </div>
 
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                            </svg>
+                                    {/* Manager Card */}
+                                    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                                        <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-3">
+                                            <Briefcase className="w-5 h-5 text-green-600 dark:text-green-400" />
                                         </div>
-                                        <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">Real-time Analytics</h3>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">Live charts, reports, and interactive dashboards</p>
-                                        </div>
+                                        <h3 className="font-semibold text-gray-900 dark:text-white">Manager</h3>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                            Team & operations
+                                        </p>
                                     </div>
 
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                                            </svg>
+                                    {/* User Card */}
+                                    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                                        <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-3">
+                                            <User className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                                         </div>
-                                        <div>
-                                            <h3 className="font-semibold text-gray-900 dark:text-white">CRUD Operations</h3>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">Full create, read, update, delete functionality</p>
-                                        </div>
+                                        <h3 className="font-semibold text-gray-900 dark:text-white">User</h3>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                            Personal dashboard
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Stats */}
+                                <div className="mt-8 grid grid-cols-2 gap-4">
+                                    <div className="text-center">
+                                        <p className="text-2xl font-bold text-gray-900 dark:text-white">3</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">User Roles</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-2xl font-bold text-gray-900 dark:text-white">24/7</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Support</p>
                                     </div>
                                 </div>
                             </div>
@@ -123,7 +170,7 @@ export default function RootLayout({
 
                         {/* Right Side - Auth Form */}
                         <div className="lg:w-1/2 w-full">
-                            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 sm:p-8">
+                            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 sm:p-8 border border-gray-200 dark:border-gray-800">
                                 {showRegister ? <Register /> : <Login />}
                             </div>
                         </div>
@@ -132,22 +179,45 @@ export default function RootLayout({
             </main>
 
             {/* Footer */}
-            <footer className="border-t border-gray-200 dark:border-gray-800 py-6">
+            <footer className="border-t border-gray-200 dark:border-gray-800 py-6 bg-white/50 dark:bg-gray-900/50 backdrop-blur-lg">
                 <div className="container mx-auto px-4 sm:px-6">
                     <div className="flex flex-col sm:flex-row items-center justify-between">
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                            © 2026 Analytics Dashboard. All rights reserved.
+                            © 2026 Analytics. All rights reserved.
                         </p>
                         <div className="flex items-center space-x-6 mt-4 sm:mt-0">
-                            <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600">Privacy Policy</a>
-                            <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600">Terms of Service</a>
-                            <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600">Help Center</a>
+                            <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600">Privacy</a>
+                            <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600">Terms</a>
+                            <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600">Contact</a>
                         </div>
                     </div>
                 </div>
             </footer>
 
-            <Toaster position="top-right" />
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: '#fff',
+                        color: '#363636',
+                    },
+                    success: {
+                        duration: 3000,
+                        iconTheme: {
+                            primary: '#10B981',
+                            secondary: '#fff',
+                        },
+                    },
+                    error: {
+                        duration: 4000,
+                        iconTheme: {
+                            primary: '#EF4444',
+                            secondary: '#fff',
+                        },
+                    },
+                }}
+            />
             </body>
             </html>
         )
@@ -161,18 +231,21 @@ export default function RootLayout({
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden">
                 <Header />
-                <main className="flex-1 overflow-y-auto">
+                <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950">
                     {children}
                 </main>
-                <footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-6">
-                    <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                        <p>© 2026 Analytics Dashboard. All rights reserved.</p>
-                        <p>v2.1.0 • Updated just now</p>
-                    </div>
-                </footer>
             </div>
         </div>
-        <Toaster position="top-right" />
+        <Toaster
+            position="top-right"
+            toastOptions={{
+                duration: 4000,
+                style: {
+                    background: '#fff',
+                    color: '#363636',
+                },
+            }}
+        />
         </body>
         </html>
     )

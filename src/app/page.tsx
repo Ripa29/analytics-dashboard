@@ -238,43 +238,33 @@ export default function DashboardPage() {
 
                 <FilterBar />
 
-                {/* Export Button */}
-                <div className="flex justify-end">
-                    <Button onClick={exportToCSV} icon={<Download size={18} />} variant="secondary">
-                        Export Dashboard Data
-                    </Button>
-                </div>
 
                 {/* KPI Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                     <KPICard
                         title="Total Revenue"
                         value={staticData.stats.revenue}
                         change={staticData.stats.revenueChange}
                         icon="revenue"
-                        trend="up"
-                    />
+                        trend="up"/>
                     <KPICard
                         title="Total Users"
                         value={staticData.stats.users}
                         change={staticData.stats.usersChange}
                         icon="users"
-                        trend="up"
-                    />
+                        trend="up"/>
                     <KPICard
                         title="Orders"
                         value={staticData.stats.orders}
                         change={staticData.stats.ordersChange}
                         icon="orders"
-                        trend={staticData.stats.ordersChange > 0 ? "up" : "down"}
-                    />
+                        trend={staticData.stats.ordersChange > 0 ? "up" : "down"}/>
                     <KPICard
                         title="Conversion Rate"
                         value={`${staticData.stats.conversionRate}%`}
                         change={staticData.stats.conversionChange}
                         icon="conversion"
-                        trend="up"
-                    />
+                        trend="up"/>
                 </div>
 
                 {/* Charts */}

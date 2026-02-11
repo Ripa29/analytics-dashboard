@@ -7,6 +7,7 @@ import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
 import { useDashboardStore } from '@/lib/store/dashboardStore'
 import toast from 'react-hot-toast'
+import { cn } from '@/lib/utils'
 
 const users = [
     {
@@ -33,7 +34,7 @@ const users = [
     },
     {
         id: '3',
-        name: 'User',
+        name: 'Regular User',
         email: 'user@example.com',
         password: 'user123',
         role: 'user' as const,
@@ -49,7 +50,7 @@ export const Login: React.FC = () => {
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const { setUser } = useDashboardStore()
+    const { setUser, darkMode } = useDashboardStore()
     const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -58,20 +59,44 @@ export const Login: React.FC = () => {
 
         try {
             await new Promise(resolve => setTimeout(resolve, 1000))
-
             const user = users.find(u => u.email === email && u.password === password)
 
             if (user) {
-                // Destructure to exclude password and create proper User object
                 const { password: _, ...userWithoutPassword } = user
                 setUser(userWithoutPassword)
-                toast.success(`Welcome back, ${user.name}!`)
+                toast.success(`Welcome back, ${user.name}!`, {
+                    style: {
+                        background: darkMode ? '#1F2937' : '#fff',
+                        color: darkMode ? '#fff' : '#363636',
+                        border: darkMode ? '1px solid #374151' : 'none'
+                    },
+                    iconTheme: {
+                        primary: '#10B981',
+                        secondary: darkMode ? '#1F2937' : '#fff'
+                    }
+                })
                 router.push('/')
             } else {
-                toast.error('Invalid credentials')
+                toast.error('Invalid credentials', {
+                    style: {
+                        background: darkMode ? '#1F2937' : '#fff',
+                        color: darkMode ? '#fff' : '#363636',
+                        border: darkMode ? '1px solid #374151' : 'none'
+                    },
+                    iconTheme: {
+                        primary: '#EF4444',
+                        secondary: darkMode ? '#1F2937' : '#fff'
+                    }
+                })
             }
         } catch (error) {
-            toast.error('Login failed')
+            toast.error('Login failed', {
+                style: {
+                    background: darkMode ? '#1F2937' : '#fff',
+                    color: darkMode ? '#fff' : '#363636',
+                    border: darkMode ? '1px solid #374151' : 'none'
+                }
+            })
         } finally {
             setIsLoading(false)
         }
@@ -80,101 +105,262 @@ export const Login: React.FC = () => {
     const handleQuickLogin = (user: typeof users[0]) => {
         setEmail(user.email)
         setPassword(user.password)
-        // Auto submit after 500ms
-        setTimeout(() => {
-            const submitButton = document.querySelector('button[type="submit"]') as HTMLButtonElement
-            if (submitButton) {
-                submitButton.click()
-            }
-        }, 500)
+    }
+
+    // Get role-based color
+    const getRoleColor = (role: string) => {
+        switch (role) {
+            case 'admin': return 'blue'
+            case 'manager': return 'green'
+            default: return 'purple'
+        }
+    }
+
+    // Get role gradient
+    const getRoleGradient = (role: string) => {
+        switch (role) {
+            case 'admin': return 'from-blue-500 to-blue-600'
+            case 'manager': return 'from-green-500 to-green-600'
+            default: return 'from-purple-500 to-purple-600'
+        }
     }
 
     return (
-        <Card className="w-full max-w-md overflow-hidden">
+        <Card className={cn(
+            "w-full max-w-md overflow-hidden transition-colors duration-300",
+            darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        )}>
             <div className="p-8">
+                {/* Header */}
                 <div className="flex flex-col items-center mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        Analytic Dashboard
+
+                    <h1 className={cn(
+                        "text-2xl font-bold",
+                        darkMode ? 'text-white' : 'text-gray-900'
+                    )}>
+                        Welcome Back
                     </h1>
-                    <p className="text-gray-600 mt-2">
-                        Sign in to access your analytics
+                    <p className={cn(
+                        "text-sm mt-2",
+                        darkMode ? 'text-gray-400' : 'text-gray-600'
+                    )}>
+                        Sign in to access your analytics dashboard
                     </p>
                 </div>
 
+                {/* Login Form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Email Field */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className={cn(
+                            "block text-sm font-medium mb-2",
+                            darkMode ? 'text-gray-300' : 'text-gray-700'
+                        )}>
                             Email Address
                         </label>
                         <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                            <Mail className={cn(
+                                "absolute left-3 top-1/2 transform -translate-y-1/2",
+                                darkMode ? 'text-gray-500' : 'text-gray-400'
+                            )} size={20} />
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                className={cn(
+                                    "w-full pl-10 pr-4 py-3 rounded-lg border transition-all duration-200",
+                                    "focus:outline-none focus:ring-2 focus:ring-purple-500",
+                                    darkMode
+                                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
+                                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                                )}
                                 placeholder="Enter your email"
-                                required/>
+                                required
+                            />
                         </div>
                     </div>
 
+                    {/* Password Field */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className={cn(
+                            "block text-sm font-medium mb-2",
+                            darkMode ? 'text-gray-300' : 'text-gray-700'
+                        )}>
                             Password
                         </label>
                         <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                            <Lock className={cn(
+                                "absolute left-3 top-1/2 transform -translate-y-1/2",
+                                darkMode ? 'text-gray-500' : 'text-gray-400'
+                            )} size={20} />
                             <input
                                 type={showPassword ? 'text' : 'password'}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full pl-10 pr-12 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                className={cn(
+                                    "w-full pl-10 pr-12 py-3 rounded-lg border transition-all duration-200",
+                                    "focus:outline-none focus:ring-2 focus:ring-purple-500",
+                                    darkMode
+                                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
+                                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                                )}
                                 placeholder="Enter your password"
-                                required/>
+                                required
+                            />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                className={cn(
+                                    "absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors",
+                                    darkMode
+                                        ? 'text-gray-400 hover:text-gray-300'
+                                        : 'text-gray-400 hover:text-gray-600'
+                                )}
+                            >
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full" isLoading={isLoading}>
+                    {/* Remember Me & Forgot Password */}
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                            <input
+                                type="checkbox"
+                                id="remember"
+                                className={cn(
+                                    "w-4 h-4 rounded border transition-colors",
+                                    darkMode
+                                        ? 'bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500 focus:ring-offset-gray-800'
+                                        : 'bg-white border-gray-300 text-purple-600 focus:ring-purple-500'
+                                )}
+                            />
+                            <label
+                                htmlFor="remember"
+                                className={cn(
+                                    "ml-2 text-sm",
+                                    darkMode ? 'text-gray-400' : 'text-gray-600'
+                                )}
+                            >
+                                Remember me
+                            </label>
+                        </div>
+                        <button
+                            type="button"
+                            className={cn(
+                                "text-sm font-medium hover:underline",
+                                darkMode ? 'text-purple-400 hover:text-purple-300' : 'text-purple-600 hover:text-purple-700'
+                            )}
+                        >
+                            Forgot password?
+                        </button>
+                    </div>
+
+                    {/* Sign In Button */}
+                    <Button
+                        type="submit"
+                        className={cn(
+                            "w-full bg-gradient-to-r from-purple-500 to-pink-600",
+                            "hover:from-purple-600 hover:to-pink-700",
+                            "text-white font-medium py-3"
+                        )}
+                        isLoading={isLoading}
+                    >
                         Sign In
                     </Button>
                 </form>
 
+                {/* Quick Login Section */}
                 <div className="mt-8">
-                    <p className="text-sm text-gray-600 text-center mb-4">
-                        Quick login for testing:
-                    </p>
-                    <div className="grid grid-cols-3 gap-3">
-                        {users.map((user) => (
-                            <button
-                                key={user.role}
-                                type="button"
-                                onClick={() => handleQuickLogin(user)}
-                                className="flex flex-col items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                                <div className="w-8 h-8 rounded-full mb-2 overflow-hidden">
-                                    <img src={user.avatar} alt={user.name}
-                                        className="w-full h-full object-cover"/>
-                                </div>
-                                <span className="text-xs font-medium capitalize">{user.role}</span>
-                            </button>
-                        ))}
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className={cn(
+                                "w-full border-t",
+                                darkMode ? 'border-gray-700' : 'border-gray-200'
+                            )} />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className={cn(
+                                "px-2 bg-card",
+                                darkMode ? 'text-gray-500 bg-gray-800' : 'text-gray-500 bg-white'
+                            )}>
+                                Quick Login for Testing
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 mt-4">
+                        {users.map((user) => {
+                            const roleColor = getRoleColor(user.role)
+                            const roleGradient = getRoleGradient(user.role)
+
+                            return (
+                                <button
+                                    key={user.role}
+                                    type="button"
+                                    onClick={() => handleQuickLogin(user)}
+                                    className={cn(
+                                        "flex flex-col items-center p-3 rounded-lg border transition-all duration-200",
+                                        "hover:shadow-md transform hover:-translate-y-0.5",
+                                        darkMode
+                                            ? 'bg-gray-700/50 border-gray-600 hover:bg-gray-700'
+                                            : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                                    )}
+                                >
+                                    <div className={cn(
+                                        "w-10 h-10 mb-2 rounded-full bg-gradient-to-br flex items-center justify-center text-white text-sm font-semibold",
+                                        roleGradient
+                                    )}>
+                                        {user.avatar ? (
+                                            <img
+                                                src={user.avatar}
+                                                alt={user.name}
+                                                className="w-full h-full rounded-full object-cover"
+                                            />
+                                        ) : (
+                                            user.name.charAt(0).toUpperCase()
+                                        )}
+                                    </div>
+                                    <span className={cn(
+                                        "text-xs font-medium capitalize",
+                                        darkMode ? 'text-gray-300' : 'text-gray-700'
+                                    )}>
+                                        {user.role}
+                                    </span>
+                                </button>
+                            )
+                        })}
                     </div>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                    <div className="text-center">
-                        <p className="text-sm text-gray-600">
-                            For demo purposes, use the credentials above.
-                        </p>
-                        <p className="text-xs text-gray-500 mt-2">
-                            Analytics Dashboard v2.1
-                        </p>
-                    </div>
+                {/* Register Link */}
+                <div className="mt-6 text-center">
+                    <p className={cn(
+                        "text-sm",
+                        darkMode ? 'text-gray-400' : 'text-gray-600'
+                    )}>
+                        Don't have an account?{' '}
+                        <button
+                            type="button"
+                            onClick={() => router.push('/register')}
+                            className={cn(
+                                "font-medium hover:underline",
+                                darkMode ? 'text-purple-400 hover:text-purple-300' : 'text-purple-600 hover:text-purple-700'
+                            )}
+                        >
+                            Create account
+                        </button>
+                    </p>
+                </div>
+
+                {/* Version */}
+                <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <p className={cn(
+                        "text-xs text-center",
+                        darkMode ? 'text-gray-500' : 'text-gray-500'
+                    )}>
+                        Analytics Dashboard v2.1.0
+                    </p>
                 </div>
             </div>
         </Card>
