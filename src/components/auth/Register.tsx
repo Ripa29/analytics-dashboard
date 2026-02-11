@@ -23,7 +23,7 @@ export const Register: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const { addUser, setUser, user: currentUser } = useDashboardStore()
+    const { addUser, setUser, user: currentUser, darkMode } = useDashboardStore()
     const router = useRouter()
 
     const canRegisterAdmin = currentUser?.role === 'admin'
@@ -53,31 +53,34 @@ export const Register: React.FC = () => {
                 role: formData.role,
                 phone: formData.phone,
                 department: formData.department,
-                createdAt: new Date(),
+                createdAt: new Date().toISOString(),
                 avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name.replace(/\s+/g, '')}`
             }
 
             // Add user to store
-            addUser(newUser)
+            addUser({
+                ...newUser,
+                createdAt: new Date(newUser.createdAt)
+            })
 
             // If no user is logged in (public registration), auto-login the new user
             if (!currentUser) {
-                setUser(newUser)
+                setUser({
+                    ...newUser,
+                    createdAt: new Date(newUser.createdAt)
+                })
                 toast.success(`Welcome, ${formData.name}! Your ${formData.role} account has been created.`)
 
                 // Redirect based on role
                 switch (formData.role) {
                     case 'admin':
                         router.push('/')
-                        toast.success('Redirecting to Admin Dashboard...')
                         break
                     case 'manager':
                         router.push('/')
-                        toast.success('Redirecting to Manager Dashboard...')
                         break
                     case 'user':
                         router.push('/')
-                        toast.success('Redirecting to your Dashboard...')
                         break
                 }
             } else {
@@ -129,14 +132,23 @@ export const Register: React.FC = () => {
     }
 
     return (
-        <Card className="w-full max-w-md overflow-hidden">
+        <Card className={cn(
+            "w-full max-w-md overflow-hidden transition-colors duration-300",
+            darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'
+        )}>
             <div className="p-6 sm:p-8">
-                {/* Header  */}
+                {/* Header */}
                 <div className="flex flex-col items-center mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h1 className={cn(
+                        "text-2xl font-bold",
+                        darkMode ? 'text-white' : 'text-gray-900'
+                    )}>
                         {currentUser ? 'Register New User' : 'Create Your Account'}
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-2 text-center">
+                    <p className={cn(
+                        "text-sm mt-2 text-center",
+                        darkMode ? 'text-gray-400' : 'text-gray-600'
+                    )}>
                         {currentUser
                             ? `Register a new ${formData.role} account`
                             : 'Choose your role and start your journey'
@@ -148,79 +160,145 @@ export const Register: React.FC = () => {
                     {/* Personal Information */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className={cn(
+                                "block text-sm font-medium mb-2",
+                                darkMode ? 'text-gray-300' : 'text-gray-700'
+                            )}>
                                 Full Name *
                             </label>
                             <div className="relative">
-                                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <User className={cn(
+                                    "absolute left-3 top-1/2 transform -translate-y-1/2",
+                                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                                )} size={20} />
                                 <input
                                     type="text"
                                     required
                                     value={formData.name}
                                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                    placeholder="Enter your full name"/>
+                                    className={cn(
+                                        "w-full pl-10 pr-4 py-2.5 rounded-lg border transition-all duration-200",
+                                        "focus:outline-none focus:ring-2 focus:ring-purple-500",
+                                        darkMode
+                                            ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
+                                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+                                    )}
+                                    placeholder="Enter your full name"
+                                />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className={cn(
+                                "block text-sm font-medium mb-2",
+                                darkMode ? 'text-gray-300' : 'text-gray-700'
+                            )}>
                                 Email Address *
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <Mail className={cn(
+                                    "absolute left-3 top-1/2 transform -translate-y-1/2",
+                                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                                )} size={20} />
                                 <input
                                     type="email"
                                     required
                                     value={formData.email}
                                     onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                    placeholder="john@example.com"/>
+                                    className={cn(
+                                        "w-full pl-10 pr-4 py-2.5 rounded-lg border transition-all duration-200",
+                                        "focus:outline-none focus:ring-2 focus:ring-purple-500",
+                                        darkMode
+                                            ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
+                                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+                                    )}
+                                    placeholder="john@example.com"
+                                />
                             </div>
                         </div>
                     </div>
 
-                    {/* Password  */}
+                    {/* Password Fields */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className={cn(
+                                "block text-sm font-medium mb-2",
+                                darkMode ? 'text-gray-300' : 'text-gray-700'
+                            )}>
                                 Password *
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <Lock className={cn(
+                                    "absolute left-3 top-1/2 transform -translate-y-1/2",
+                                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                                )} size={20} />
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     required
                                     value={formData.password}
                                     onChange={(e) => setFormData({...formData, password: e.target.value})}
-                                    className="w-full pl-10 pr-12 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                    placeholder="••••••••"/>
+                                    className={cn(
+                                        "w-full pl-10 pr-12 py-2.5 rounded-lg border transition-all duration-200",
+                                        "focus:outline-none focus:ring-2 focus:ring-purple-500",
+                                        darkMode
+                                            ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
+                                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+                                    )}
+                                    placeholder="••••••••"
+                                />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    className={cn(
+                                        "absolute right-3 top-1/2 transform -translate-y-1/2",
+                                        "transition-colors duration-200",
+                                        darkMode
+                                            ? 'text-gray-500 hover:text-gray-300'
+                                            : 'text-gray-400 hover:text-gray-600'
+                                    )}
+                                >
                                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                 </button>
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className={cn(
+                                "block text-sm font-medium mb-2",
+                                darkMode ? 'text-gray-300' : 'text-gray-700'
+                            )}>
                                 Confirm Password *
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <Lock className={cn(
+                                    "absolute left-3 top-1/2 transform -translate-y-1/2",
+                                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                                )} size={20} />
                                 <input
                                     type={showConfirmPassword ? 'text' : 'password'}
                                     required
                                     value={formData.confirmPassword}
                                     onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                                    className="w-full pl-10 pr-12 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                    placeholder="••••••••"/>
+                                    className={cn(
+                                        "w-full pl-10 pr-12 py-2.5 rounded-lg border transition-all duration-200",
+                                        "focus:outline-none focus:ring-2 focus:ring-purple-500",
+                                        darkMode
+                                            ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
+                                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+                                    )}
+                                    placeholder="••••••••"
+                                />
                                 <button
                                     type="button"
                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    className={cn(
+                                        "absolute right-3 top-1/2 transform -translate-y-1/2",
+                                        "transition-colors duration-200",
+                                        darkMode
+                                            ? 'text-gray-500 hover:text-gray-300'
+                                            : 'text-gray-400 hover:text-gray-600'
+                                    )}
+                                >
                                     {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                 </button>
                             </div>
@@ -230,41 +308,69 @@ export const Register: React.FC = () => {
                     {/* Additional Information */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className={cn(
+                                "block text-sm font-medium mb-2",
+                                darkMode ? 'text-gray-300' : 'text-gray-700'
+                            )}>
                                 Phone Number
                             </label>
                             <div className="relative">
-                                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <Phone className={cn(
+                                    "absolute left-3 top-1/2 transform -translate-y-1/2",
+                                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                                )} size={20} />
                                 <input
                                     type="tel"
                                     value={formData.phone}
                                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                    className={cn(
+                                        "w-full pl-10 pr-4 py-2.5 rounded-lg border transition-all duration-200",
+                                        "focus:outline-none focus:ring-2 focus:ring-purple-500",
+                                        darkMode
+                                            ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
+                                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+                                    )}
                                     placeholder="+8801234567890"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className={cn(
+                                "block text-sm font-medium mb-2",
+                                darkMode ? 'text-gray-300' : 'text-gray-700'
+                            )}>
                                 Department
                             </label>
                             <div className="relative">
-                                <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <Briefcase className={cn(
+                                    "absolute left-3 top-1/2 transform -translate-y-1/2",
+                                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                                )} size={20} />
                                 <input
                                     type="text"
                                     value={formData.department}
                                     onChange={(e) => setFormData({...formData, department: e.target.value})}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                    placeholder="Marketing, Sales, etc."/>
+                                    className={cn(
+                                        "w-full pl-10 pr-4 py-2.5 rounded-lg border transition-all duration-200",
+                                        "focus:outline-none focus:ring-2 focus:ring-purple-500",
+                                        darkMode
+                                            ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
+                                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+                                    )}
+                                    placeholder="Marketing, Sales, etc."
+                                />
                             </div>
                         </div>
                     </div>
 
-                    {/* Role Selection  */}
+                    {/* Role Selection - Only show if admin is creating user OR during public registration */}
                     {(!currentUser || canRegisterAdmin) && (
                         <div className="space-y-3">
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label className={cn(
+                                "block text-sm font-medium",
+                                darkMode ? 'text-gray-300' : 'text-gray-700'
+                            )}>
                                 Select Your Role *
                             </label>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -283,7 +389,8 @@ export const Register: React.FC = () => {
                                                     ? `border-${roleColor}-500 bg-${roleColor}-50 dark:bg-${roleColor}-900/20`
                                                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600',
                                                 "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                                            )}>
+                                            )}
+                                        >
                                             {/* Role Icon */}
                                             <div className={cn(
                                                 "w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center",
@@ -342,7 +449,8 @@ export const Register: React.FC = () => {
                             !currentUser && formData.role === 'manager' && 'bg-gradient-to-r from-green-500 to-green-600',
                             !currentUser && formData.role === 'user' && 'bg-gradient-to-r from-purple-500 to-purple-600'
                         )}
-                        isLoading={isLoading}>
+                        isLoading={isLoading}
+                    >
                         {currentUser
                             ? `Register as ${formData.role}`
                             : `Create ${formData.role} Account`
@@ -352,12 +460,21 @@ export const Register: React.FC = () => {
                     {/* Login Link - Only for public registration */}
                     {!currentUser && (
                         <div className="text-center mt-6">
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <p className={cn(
+                                "text-sm",
+                                darkMode ? 'text-gray-400' : 'text-gray-600'
+                            )}>
                                 Already have an account?{' '}
                                 <button
                                     type="button"
                                     onClick={() => router.push('/')}
-                                    className="font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300">
+                                    className={cn(
+                                        "font-medium transition-colors duration-200",
+                                        darkMode
+                                            ? 'text-purple-400 hover:text-purple-300'
+                                            : 'text-purple-600 hover:text-purple-700'
+                                    )}
+                                >
                                     Sign In
                                 </button>
                             </p>
@@ -370,7 +487,12 @@ export const Register: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={() => router.push('/users')}
-                                className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
+                                className={cn(
+                                    "text-sm transition-colors duration-200",
+                                    darkMode
+                                        ? 'text-gray-400 hover:text-gray-300'
+                                        : 'text-gray-600 hover:text-gray-900'
+                                )}
                             >
                                 ← Back to Users Management
                             </button>
@@ -391,10 +513,16 @@ export const Register: React.FC = () => {
                                     {getRoleIcon(formData.role)}
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                    <p className={cn(
+                                        "text-sm font-medium",
+                                        darkMode ? 'text-white' : 'text-gray-900'
+                                    )}>
                                         You're registering as: <span className="font-bold capitalize">{formData.role}</span>
                                     </p>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                                    <p className={cn(
+                                        "text-xs",
+                                        darkMode ? 'text-gray-400' : 'text-gray-600'
+                                    )}>
                                         {getRoleDescription(formData.role)}
                                     </p>
                                 </div>
