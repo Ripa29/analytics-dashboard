@@ -5,20 +5,37 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "mock-api": "json-server --watch data/db.json --port 3001",
+    "dev-all": "concurrently \"npm run mock-api\" \"npm run dev\""
   },
   "dependencies": {
+    "axios": "^1.13.5",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "json-server": "^1.0.0-beta.5",
+    "lucide-react": "^0.563.0",
     "next": "16.1.6",
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-hot-toast": "^2.6.0",
+    "recharts": "^3.7.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "xlsx": "^0.18.5",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.33",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.24",
     "babel-plugin-react-compiler": "1.0.0",
-    "tailwindcss": "^4",
+    "concurrently": "^9.2.1",
+    "postcss": "^8.5.6",
+    "prettier": "^3.8.1",
+    "tailwindcss": "^3.4.19",
     "typescript": "^5"
   }
 }

@@ -1,0 +1,58 @@
+{
+    "stats": {
+        "revenue": 54230,
+        "users": 1245,
+        "orders": 342,
+        "conversionRate": 4.3,
+        "revenueChange": 12.5,
+        "usersChange": 8.2,
+        "ordersChange": -2.3,
+        "conversionChange": 1.8
+    },
+    "revenue": [
+        { "month": "Jan", "revenue": 4000, "target": 4200 },
+        { "month": "Feb", "revenue": 3000, "target": 3200 },
+        { "month": "Mar", "revenue": 5000, "target": 4800 },
+        { "month": "Apr", "revenue": 4500, "target": 4400 },
+        { "month": "May", "revenue": 6000, "target": 5800 },
+        { "month": "Jun", "revenue": 5500, "target": 5400 },
+        { "month": "Jul", "revenue": 7000, "target": 6500 },
+        { "month": "Aug", "revenue": 6500, "target": 6300 },
+        { "month": "Sep", "revenue": 8000, "target": 7500 },
+        { "month": "Oct", "revenue": 7500, "target": 7200 },
+        { "month": "Nov", "revenue": 9000, "target": 8500 },
+        { "month": "Dec", "revenue": 8500, "target": 8200 }
+    ],
+    "orders": [
+        { "month": "Jan", "orders": 65, "previousYear": 58 },
+        { "month": "Feb", "orders": 59, "previousYear": 53 },
+        { "month": "Mar", "orders": 80, "previousYear": 72 },
+        { "month": "Apr", "orders": 81, "previousYear": 75 },
+        { "month": "May", "orders": 56, "previousYear": 50 },
+        { "month": "Jun", "orders": 55, "previousYear": 52 },
+        { "month": "Jul", "orders": 40, "previousYear": 38 },
+        { "month": "Aug", "orders": 45, "previousYear": 42 },
+        { "month": "Sep", "orders": 70, "previousYear": 65 },
+        { "month": "Oct", "orders": 75, "previousYear": 70 },
+        { "month": "Nov", "orders": 85, "previousYear": 78 },
+        { "month": "Dec", "orders": 90, "previousYear": 85 }
+    ],
+    "users": [
+        { "type": "Free", "value": 600, "color": "#3B82F6" },
+        { "type": "Premium", "value": 400, "color": "#10B981" },
+        { "type": "Enterprise", "value": 245, "color": "#8B5CF6" }
+    ],
+    "traffic": [
+        { "source": "Organic", "value": 45, "color": "#10B981" },
+        { "source": "Paid", "value": 25, "color": "#3B82F6" },
+        { "source": "Social", "value": 20, "color": "#8B5CF6" },
+        { "source": "Referral", "value": 10, "color": "#F59E0B" }
+    ],
+    "logs": [
+        { "id": 1, "user": "John Doe", "action": "Login", "timestamp": "2024-01-15T10:30:00Z" },
+        { "id": 2, "user": "Jane Smith", "action": "Purchase", "timestamp": "2024-01-15T11:15:00Z" },
+        { "id": 3, "user": "Admin User", "action": "Settings Update", "timestamp": "2024-01-15T12:00:00Z" },
+        { "id": 4, "user": "Manager User", "action": "Report Generated", "timestamp": "2024-01-15T13:30:00Z" },
+        { "id": 5, "user": "Regular User", "action": "Profile Updated", "timestamp": "2024-01-15T14:45:00Z" }
+    ]
+}
