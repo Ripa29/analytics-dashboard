@@ -323,12 +323,7 @@ export const Login: React.FC = () => {
                                             {user.role}
                                         </span>
                                     </div>
-                                    <span className={cn(
-                                        "text-[10px] mt-1",
-                                        darkMode ? 'text-gray-500' : 'text-gray-500'
-                                    )}>
-                                        {user.email}
-                                    </span>
+
                                 </button>
                             )
                         })}
