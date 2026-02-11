@@ -3,7 +3,7 @@ A fully functional analytics dashboard with comprehensive role-based access cont
 
 ✨ Live Demo
 
-Deployed Link: 
+Deployed Link: https://analytics-dashboard-nu-two.vercel.app
 
 🚀 Features
 ✅ Authentication & Authorization
